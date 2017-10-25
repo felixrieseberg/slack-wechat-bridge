@@ -1,6 +1,7 @@
 {
   "extends": ["tslint:latest", "tslint:recommended"],
   "rules": {
+    "no-console": false,
     "curly": false,
     "eofline": false,
     "align": [true, "parameters"],
