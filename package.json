@@ -8,7 +8,7 @@
     "debug": "DEBUG=cerberus* node --nolazy --inspect-brk=9229 .",
     "test": "tslint src/**/*.ts -c tslint.json --project tsconfig.json --type-check",
     "live": "nodemon --config nodemon.json",
-    "postinstall": "tsc"
+    "postinstall": "tsc -p ."
   },
   "engines": {
     "node": "^7.10.0"

@@ -7,12 +7,16 @@
     "strictNullChecks": true,
     "sourceMap": true,
     "outDir": "dist",
-    "removeComments": false
+    "removeComments": false,
+    "baseUrl" : "./",
+    "paths": {
+      "*" : ["./node_modules/@types/*", "*"]
+    }
   },
   "include": [
     "src/**/*"
   ],
   "exclude": [
-    "node_modules"
+    "node_modules/**/*"
   ]
 }

@@ -1,5 +1,5 @@
 import { Wechaty, Room } from 'wechaty';
-import { postToChannel } from './slack';
+import { slack } from './slack';
 import { WECHAT_ROOMS } from './config';
 import * as QrcodeTerminal from 'qrcode-terminal';
 
@@ -9,17 +9,17 @@ export class WeChat {
   constructor() {
     this.bot = Wechaty.instance();
     this.bot
-      .on('login', (user) => console.log('Bot', `${user.name()} logined`))
-      .on('logout', (user) => console.log('Bot', `${user.name()} logouted`))
-      .on('error', (e) => console.log('Bot', 'error: %s', e))
-      .on('scan', (url, code) => {
+      .on('login', (user: any) => console.log('Bot', `${user.name()} logined`))
+      .on('logout', (user: any) => console.log('Bot', `${user.name()} logouted`))
+      .on('error', (e: Error) => console.log('Bot', 'error: %s', e))
+      .on('scan', (url: string, code: number) => {
         if (!/201|200/.test(String(code))) {
           const loginUrl = url.replace(/\/qrcode\//, '/l/');
           QrcodeTerminal.generate(loginUrl);
         }
         console.log(`${url}\n[${code}] Scan QR Code in above url to login: `);
       })
-      .on('message', async (message) => {
+      .on('message', async (message: any) => {
         const room    = message.room();
         const sender  = message.from();
         const content = message.content();
@@ -33,7 +33,7 @@ export class WeChat {
         console.log(room.topic(), sender.name, content);
 
         if (!message.self()) {
-          postToChannel(content, sender.name());
+          slack.postToChannel(content, sender.name());
         }
       })
       .start();
