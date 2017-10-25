@@ -1,10 +1,11 @@
-import { Wechaty, Room } from 'wechaty';
 import { slack } from './slack';
 import { WECHAT_ROOMS } from './config';
 import * as QrcodeTerminal from 'qrcode-terminal';
 
+const { Wechaty, Room } = require('wechaty');
+
 export class WeChat {
-  private bot: Wechaty;
+  private bot: any;
 
   constructor() {
     this.bot = Wechaty.instance();
