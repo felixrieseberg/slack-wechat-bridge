@@ -73,9 +73,12 @@ export class Slack {
     // let's just stop here.
     if (!SLACK_CHANNELS.find(({ id }) => channel === id)) return;
 
-    const username = await this.getUsername(user);
-
-    weChat.postToGroup(text, username);
+    try {
+      const username = await this.getUsername(user);
+      weChat.postToGroup(text, username);
+    } catch (error) {
+      console.log(error);
+    }
   }
 
   private async getUsername(id: string): Promise<string> {
@@ -86,7 +89,9 @@ export class Slack {
       }
 
       this.slackClient.users.info(id, (err: any, result: any) => {
-        console.log(err, result);
+        if (err) {
+          return reject(err);
+        }
 
         const username: string = result && result.user
           ? result.user.name
