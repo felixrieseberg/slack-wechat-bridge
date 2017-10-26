@@ -9,6 +9,8 @@ export class WeChat {
   private ready: boolean = false;
 
   constructor() {
+    console.log(`WeChat rooms:`, WECHAT_ROOMS);
+
     this.bot = Wechaty.instance();
     this.bot
       .on('login', (user: any) => {
@@ -42,10 +44,15 @@ export class WeChat {
         console.log(`Received WeChat message:`);
         console.log(roomName, senderName, content);
 
-        if (!WECHAT_ROOMS.find(({ name }) => name === roomName)) return;
+        const isSelf = message.self();
+        const isMatchingRoom = !!WECHAT_ROOMS.find(({ name }) => {
+          return name.trim() === roomName.trim();
+        });
 
-        if (!message.self()) {
+        if (!isSelf && isMatchingRoom) {
           slack.postToChannel(content, senderName);
+        } else {
+          console.log(`Not posting message.`, { isSelf, isMatchingRoom });
         }
       })
       .start();
