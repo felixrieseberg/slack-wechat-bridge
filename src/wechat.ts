@@ -11,8 +11,12 @@ export class WeChat {
     this.bot = Wechaty.instance();
     this.bot
       .on('login', (user: any) => console.log('Bot', `${user.name()} logined`))
-      .on('logout', (user: any) => console.log('Bot', `${user.name()} logouted`))
-      .on('error', (e: Error) => console.log('Bot', 'error: %s', e))
+      .on('logout', (user: any) => {
+        slack.postToChannel(`Warning: WeChat user on Heroku logged out. Messages will not be sent to WeChat.`);
+      })
+      .on('error', (e: Error) => {
+        slack.postToChannel(`Warning: Error encountered. ${e}`);
+      })
       .on('scan', (url: string, code: number) => {
         if (!/201|200/.test(String(code))) {
           const loginUrl = url.replace(/\/qrcode\//, '/l/');

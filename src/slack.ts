@@ -13,11 +13,11 @@ export class Slack {
     this.handleSlackIncoming.bind(this);
   }
 
-  public async postToChannel(text: string, author: string) {
+  public async postToChannel(text: string, author?: string) {
     console.log(`Posting to Slack:`, { text, author });
 
     const json = {
-      text: `Posted in WeChat by ${author}:\n>>>${text}`
+      text: author ? `Posted in WeChat by ${author}:\n>>>${text}` : text
     };
 
     await request.post(SLACK_WEBHOOK, { json });
