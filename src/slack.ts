@@ -5,8 +5,13 @@ import { WebClient } from '@slack/client';
 import { SLACK_CHANNELS, SLACK_WEBHOOK, SLACK_TOKEN } from './config';
 import { weChat } from './wechat';
 
+interface StringMap<T> {
+  [x: string]: T;
+}
+
 export class Slack {
   private slackClient: any;
+  private knownUsers: StringMap<string> = {}
 
   constructor() {
     this.slackClient = new WebClient(SLACK_TOKEN);
@@ -75,12 +80,19 @@ export class Slack {
 
   private async getUsername(id: string): Promise<string> {
     return new Promise((resolve, reject) => {
+      if (this.knownUsers[id]) {
+        resolve(this.knownUsers[id]);
+        return;
+      }
+
       this.slackClient.users.info(id, (err: any, result: any) => {
         console.log(err, result);
 
         const username: string = result && result.user
           ? result.user.name
           : id;
+
+        this.knownUsers[id] = username;
 
         resolve(username);
       });

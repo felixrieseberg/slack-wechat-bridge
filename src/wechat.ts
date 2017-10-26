@@ -6,11 +6,15 @@ const { Wechaty, Room } = require('wechaty');
 
 export class WeChat {
   private bot: any;
+  private ready: boolean = false;
 
   constructor() {
     this.bot = Wechaty.instance();
     this.bot
-      .on('login', (user: any) => console.log('Bot', `${user.name()} logined`))
+      .on('login', (user: any) => {
+        console.log('Bot', `${user.name()} online`);
+        this.ready = true;
+      })
       .on('logout', (user: any) => {
         slack.postToChannel(`Warning: WeChat user on Heroku logged out. Messages will not be sent to WeChat.`);
       })
@@ -18,11 +22,11 @@ export class WeChat {
         slack.postToChannel(`Warning: Error encountered. ${e}`);
       })
       .on('scan', (url: string, code: number) => {
-        if (!/201|200/.test(String(code))) {
+        if (!/201|200/.test(String(code)) && !process.env.HEROKU) {
           const loginUrl = url.replace(/\/qrcode\//, '/l/');
           QrcodeTerminal.generate(loginUrl);
         }
-        console.log(`${url}\n[${code}] Scan QR Code in above url to login: `);
+        console.log(`Login scan event: ${code}`);
       })
       .on('message', async (message: any) => {
         const room    = message.room();
@@ -48,6 +52,11 @@ export class WeChat {
   }
 
   public async postToGroup(text: string, author: string) {
+    if (!this.ready) {
+      console.log(`Tried to post message, but WeChat instance not ready`);
+      console.log(text);
+    }
+
     const room = await Room.find({ topic: 'Electron China' });
 
     if (!room) {
