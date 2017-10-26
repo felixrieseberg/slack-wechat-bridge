@@ -26,7 +26,7 @@ export class WeChat {
           const loginUrl = url.replace(/\/qrcode\//, '/l/');
           QrcodeTerminal.generate(loginUrl);
         }
-        console.log(`Login scan event: ${code}`);
+        console.log(`Login scan event: ${code} ${url}`);
       })
       .on('message', async (message: any) => {
         const room    = message.room();
