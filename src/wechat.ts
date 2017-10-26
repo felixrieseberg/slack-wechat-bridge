@@ -28,13 +28,16 @@ export class WeChat {
         // Don't do anything for our own messages or messages
         // from other sources
         if (!room) return;
-        if (!WECHAT_ROOMS.find(({ name }) => name === room.topic())) return;
+        const roomName = room.topic();
+        const senderName = sender.name();
 
         console.log(`Received WeChat message:`);
-        console.log(room.topic(), sender.name, content);
+        console.log(roomName, senderName, content);
+
+        if (!WECHAT_ROOMS.find(({ name }) => name === roomName)) return;
 
         if (!message.self()) {
-          slack.postToChannel(content, sender.name());
+          slack.postToChannel(content, senderName);
         }
       })
       .start();
